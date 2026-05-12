@@ -562,6 +562,7 @@
     <div class="chat-header">
       <span class="chat-title">Agente Diretor</span>
       <span class="agent-badge">PIPELINE v1.0</span>
+      <button onclick="openImportModal()" style="margin-left:auto;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:10px;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:var(--font-body);letter-spacing:0.04em;" title="Importar roteiro existente">↑ Importar</button>
     </div>
 
     <div class="chat-messages" id="chatMessages">
@@ -963,7 +964,7 @@ Crie de 3 a 5 cenas com 2-3 planos cada. Seja cinematograficamente criativo. Man
 
 Para conversas de iteração/refinamento (quando o usuário pedir mudanças), responda naturalmente E inclua o JSON atualizado completo.`;
 
-    const resp = await fetch('/api/claude', {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1571,8 +1572,50 @@ function sendSuggestion(chip) {
   sendMessage();
 }
 
+
+// ═══════════════════════════════════════════════
+// IMPORT ROTEIRO
+// ═══════════════════════════════════════════════
+function openImportModal() {
+  const modal = document.getElementById('importModal');
+  modal.style.display = 'flex';
+}
+function closeImportModal() {
+  document.getElementById('importModal').style.display = 'none';
+}
+function importScript() {
+  const text = document.getElementById('importText').value.trim();
+  if (!text) { alert('Cole o roteiro primeiro.'); return; }
+  closeImportModal();
+  // Build a special import prompt that forces structured JSON output
+  const importPrompt = 'Analise e estruture o seguinte roteiro no pipeline. Extraia título, gêneros, personagens, cenas e planos. Cole o roteiro:\n\n' + text;
+  document.getElementById('chatInput').value = importPrompt;
+  document.getElementById('suggestChips').style.display = 'none';
+  sendMessage();
+}
+// Close modal on backdrop click
+document.getElementById('importModal').addEventListener('click', function(e) {
+  if (e.target === this) closeImportModal();
+});
+
 // Init
 document.getElementById('sbStage').textContent = 'Estágio: Roteiro';
 </script>
+
+<!-- IMPORT MODAL -->
+<div id="importModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:24px;width:560px;max-width:90vw;max-height:80vh;display:flex;flex-direction:column;gap:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-family:var(--font-display);font-size:16px;color:var(--text);">Importar Roteiro</div>
+      <button onclick="closeImportModal()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div style="font-size:12px;color:var(--text3);line-height:1.6;">Cole seu roteiro abaixo. O agente vai analisar, extrair personagens, cenas e planos, e estruturar tudo no pipeline.</div>
+    <textarea id="importText" placeholder="Cole seu roteiro aqui — pode ser em qualquer formato ou idioma..." style="flex:1;min-height:240px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:14px;color:var(--text);font-family:var(--font-mono);font-size:12px;line-height:1.7;resize:none;outline:none;"></textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeImportModal()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:8px 16px;border-radius:6px;cursor:pointer;font-family:var(--font-body);font-size:12px;">Cancelar</button>
+      <button onclick="importScript()" style="background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:8px 20px;border-radius:6px;cursor:pointer;font-family:var(--font-body);font-size:12px;font-weight:500;">✦ Processar Roteiro</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
