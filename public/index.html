@@ -964,7 +964,7 @@ Crie de 3 a 5 cenas com 2-3 planos cada. Seja cinematograficamente criativo. Man
 
 Para conversas de iteração/refinamento (quando o usuário pedir mudanças), responda naturalmente E inclua o JSON atualizado completo.`;
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
