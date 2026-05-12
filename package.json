@@ -1,9 +1,8 @@
 {
   "name": "diretor-ai",
   "version": "1.0.0",
-  "description": "Agente de IA para produção cinematográfica — Claude + Nano Banana 2 + Veo 3.1",
   "private": true,
-  "engines": {
-    "node": ">=18"
+  "dependencies": {
+    "@vercel/node": "latest"
   }
 }
